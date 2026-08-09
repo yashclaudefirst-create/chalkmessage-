@@ -2,6 +2,7 @@ package com.example.chalkmessage.ui.screen
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -79,6 +80,9 @@ fun DrawingScreen(
                                     color = color,
                                     shape = CircleShape
                                 )
+                                .clickable {
+                                    viewModel.setColor(color)
+                                }
                                 .then(
                                     if (isSelected) {
                                         Modifier.padding(2.dp)

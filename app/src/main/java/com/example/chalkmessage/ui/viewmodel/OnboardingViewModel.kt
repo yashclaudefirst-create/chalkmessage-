@@ -21,10 +21,10 @@ class OnboardingViewModel(
     val uiState: StateFlow<OnboardingState> = _uiState
 
     sealed class OnboardingState {
-        object Loading : OnboardingState()
-        object NeedsName : OnboardingState()
+        data object Loading : OnboardingState()
+        data object NeedsName : OnboardingState()
         data class Ready(val userId: String, val inviteCode: String) : OnboardingState()
-        object Connected : OnboardingState()
+        data object Connected : OnboardingState()
     }
 
     init {
