@@ -59,7 +59,7 @@ private fun WidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(androidx.glance.unit.ColorProvider(Color(0xFF1B5E20).hashCode()))
-            .clickable(actionStartActivity(Intent(context, MainActivity::class.java)))
+            .clickable(actionStartActivity(MainActivity::class.java))
             .padding(8.dp),
         contentAlignment = androidx.glance.layout.Alignment.Center
     ) {

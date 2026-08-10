@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.chalkmessage.ui.theme.*
 import com.example.chalkmessage.ui.viewmodel.DrawingViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawingScreen(
     viewModel: DrawingViewModel,
