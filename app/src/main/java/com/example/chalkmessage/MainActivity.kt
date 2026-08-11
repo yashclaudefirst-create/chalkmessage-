@@ -54,7 +54,8 @@ fun ChalkApp(app: ChalkMessageApp) {
             )
             DrawingScreen(
                 viewModel = viewModel,
-                onNavigateToHistory = { navController.navigate("history") }
+                onNavigateToHistory = { navController.navigate("history") },
+                onNavigateToOnboarding = { navController.navigate("onboarding") }
             )
         }
 

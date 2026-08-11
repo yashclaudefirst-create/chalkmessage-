@@ -25,12 +25,18 @@ class ChalkRepository(
     val latestIncoming: Flow<ChalkMessage?> = messageDao.getLatestIncoming().map { it?.toDomain() }
 
     suspend fun sendMessage(strokes: List<Stroke>) {
-        val myId = userPrefs.userId.first() ?: return
+        val myId = userPrefs.userId.first() ?: throw IllegalStateException("User ID missing. Please restart onboarding.")
         val myName = userPrefs.userName.first() ?: "Anonymous"
-        val connectedTo = userPrefs.connectedTo.first() ?: return
+        val connectedTo = userPrefs.connectedTo.first()
 
-        // For MVP: send to first connection only
-        val recipientId = connectedTo.split(",").firstOrNull() ?: return
+        if (connectedTo.isNullOrEmpty()) {
+            throw IllegalArgumentException("No connected partner found")
+        }
+
+        val recipientId = connectedTo.split(",").firstOrNull()
+        if (recipientId.isNullOrEmpty()) {
+            throw IllegalArgumentException("No connected partner found")
+        }
 
         val message = ChalkMessage(
             id = java.util.UUID.randomUUID().toString(),
@@ -58,6 +64,25 @@ class ChalkRepository(
 
     suspend fun markAsRead(id: String) {
         messageDao.markAsRead(id)
+    }
+
+    suspend fun deleteMessage(id: String) {
+        messageDao.deleteMessage(id)
+    }
+
+    suspend fun deleteMessageAndReturnBackup(id: String): Pair<ChalkMessage, Boolean>? {
+        val entity = messageDao.getMessageById(id) ?: return null
+        val domain = entity.toDomain()
+        messageDao.deleteMessage(id)
+        return Pair(domain, entity.isIncoming)
+    }
+
+    suspend fun getMessageById(id: String): ChalkMessage? {
+        return messageDao.getMessageById(id)?.toDomain()
+    }
+
+    suspend fun insertMessage(message: ChalkMessage, isIncoming: Boolean) {
+        messageDao.insertMessage(message.toEntity(isIncoming))
     }
 
     private fun ChalkMessage.toEntity(isIncoming: Boolean): MessageEntity {

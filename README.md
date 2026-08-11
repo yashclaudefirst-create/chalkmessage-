@@ -125,6 +125,37 @@ app/src/main/java/com/example/chalkmessage/
 | Canvas API | Compose Canvas | Same coordinate system |
 | SVG Path | Compose Path | Same commands |
 
+## Firebase Security Rules (Development / MVP)
+
+Place these security rules in your Firebase Console under Firestore Database -> Rules:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User Profiles: Anyone can register/lookup. Protect with request.auth inside production
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Invite Codes: Used for reverse lookups during connection onboarding
+    match /inviteCodes/{inviteCode} {
+      allow read, write: if true;
+    }
+
+    // Connections: Keeps track of connected friends. connectionId = smallerUserId_largerUserId
+    match /connections/{connectionId} {
+      allow read, write: if true;
+    }
+
+    // Messages: Real-time drawing sharing
+    match /messages/{messageId} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
 ## Notes
 - Each phase must compile and run before moving to the next
 - The drawing canvas uses `detectDragGestures` to capture touch input

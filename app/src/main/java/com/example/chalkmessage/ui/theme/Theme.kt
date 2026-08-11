@@ -16,23 +16,24 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = ChalkYellow,
-    secondary = ChalkPink,
-    tertiary = ChalkBlue,
-    background = BlackboardDark,
-    surface = BlackboardGreen,
-    onBackground = ChalkWhite,
-    onSurface = ChalkWhite
+    primary = ThemePrimary,
+    secondary = ThemeSecondary,
+    error = ThemeError,
+    background = ThemeBackground,
+    surface = ThemeSurface,
+    onBackground = ThemeOnBackground,
+    onSurface = ThemeOnBackground
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = BlackboardGreen,
-    secondary = ChalkYellow,
-    tertiary = ChalkPink,
-    background = androidx.compose.ui.graphics.Color(0xFFF5F5F5),
-    surface = androidx.compose.ui.graphics.Color.White,
-    onBackground = androidx.compose.ui.graphics.Color(0xFF1C1B1F),
-    onSurface = androidx.compose.ui.graphics.Color(0xFF1C1B1F)
+// Force the beautiful dark chalkboard green background experience even in light mode to fully revamp the visual aesthetic
+private val LightColorScheme = darkColorScheme(
+    primary = ThemePrimary,
+    secondary = ThemeSecondary,
+    error = ThemeError,
+    background = ThemeBackground,
+    surface = ThemeSurface,
+    onBackground = ThemeOnBackground,
+    onSurface = ThemeOnBackground
 )
 
 @Composable
