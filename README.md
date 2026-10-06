@@ -101,6 +101,16 @@ app/src/main/java/com/example/chalkmessage/
 3. Send test message from Firebase Console
 4. Verify notification appears and widget updates
 
+## Supabase Configuration Setup
+To configure Supabase for board creation and auth:
+1. Obtain your Supabase Project URL and Anon Key from your Supabase Dashboard (Settings -> API).
+2. Add the following lines to your local `gradle.properties` (or set environment variables):
+   ```properties
+   SUPABASE_URL=https://your-supabase-project.supabase.co
+   SUPABASE_ANON_KEY=your-anon-key
+   ```
+3. Execute the database migration script in `supabase/migrations/001_boards.sql` in your Supabase SQL Editor to set up the `public.boards` table and RLS policies.
+
 ## Firebase Setup Checklist
 - [ ] Create Firebase project
 - [ ] Add Android app (package: `com.example.chalkmessage`)

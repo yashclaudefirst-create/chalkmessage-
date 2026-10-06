@@ -24,6 +24,13 @@ val CaveatFontFamily = FontFamily(
     Font(googleFont = CaveatFont, fontProvider = fontProvider, weight = FontWeight.Bold)
 )
 
+val PatrickHandFont = GoogleFont("Patrick Hand")
+
+val PatrickHandFontFamily = FontFamily(
+    Font(googleFont = PatrickHandFont, fontProvider = fontProvider, weight = FontWeight.Normal),
+    Font(googleFont = PatrickHandFont, fontProvider = fontProvider, weight = FontWeight.Bold)
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     headlineLarge = TextStyle(
