@@ -7,6 +7,7 @@ import com.example.chalkmessage.data.local.AppDatabase
 import com.example.chalkmessage.data.local.UserPrefs
 import com.example.chalkmessage.data.remote.BoardRepository
 import com.example.chalkmessage.data.remote.FirebaseRepository
+import com.example.chalkmessage.data.remote.SupabaseConfig
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
@@ -27,8 +28,8 @@ class ChalkMessageApp : Application() {
 
     val supabase by lazy {
         createSupabaseClient(
-            supabaseUrl = BuildConfig.SUPABASE_URL,
-            supabaseKey = BuildConfig.SUPABASE_ANON_KEY
+            supabaseUrl = SupabaseConfig.SUPABASE_URL,
+            supabaseKey = SupabaseConfig.SUPABASE_ANON_KEY
         ) {
             install(Auth)
             install(Postgrest)
@@ -41,7 +42,7 @@ class ChalkMessageApp : Application() {
     val repository by lazy {
         ChalkRepository(
             messageDao = database.messageDao(),
-            firebaseRepo = firebaseRepo,
+            supabase = supabase,
             userPrefs = userPrefs
         )
     }

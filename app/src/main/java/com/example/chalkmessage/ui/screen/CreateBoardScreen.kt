@@ -47,7 +47,8 @@ import com.example.chalkmessage.ui.viewmodel.CreateBoardViewModel
 
 @Composable
 fun CreateBoardScreen(
-    viewModel: CreateBoardViewModel
+    viewModel: CreateBoardViewModel,
+    onBoardCreated: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -173,6 +174,13 @@ fun CreateBoardScreen(
                                 Toast.makeText(context, "WhatsApp isn't installed", Toast.LENGTH_SHORT).show()
                             }
                         }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    ChalkButton(
+                        text = "START DRAWING",
+                        onClick = onBoardCreated
                     )
                 }
 

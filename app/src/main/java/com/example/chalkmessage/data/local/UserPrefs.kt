@@ -18,7 +18,8 @@ class UserPrefs(private val context: Context) {
         val USER_ID = stringPreferencesKey("user_id")
         val USER_NAME = stringPreferencesKey("user_name")
         val INVITE_CODE = stringPreferencesKey("invite_code")
-        val CONNECTED_TO = stringPreferencesKey("connected_to") // comma-separated IDs
+        val CONNECTED_TO = stringPreferencesKey("connected_to") // comma-separated IDs or board ID
+        val CURRENT_BOARD_ID = stringPreferencesKey("current_board_id")
         val HAS_SKIPPED_CONNECTION = booleanPreferencesKey("has_skipped_connection")
     }
 
@@ -26,7 +27,15 @@ class UserPrefs(private val context: Context) {
     val userName: Flow<String?> = context.dataStore.data.map { it[USER_NAME] }
     val inviteCode: Flow<String?> = context.dataStore.data.map { it[INVITE_CODE] }
     val connectedTo: Flow<String?> = context.dataStore.data.map { it[CONNECTED_TO] }
+    val currentBoardId: Flow<String?> = context.dataStore.data.map { it[CURRENT_BOARD_ID] ?: it[CONNECTED_TO] }
     val hasSkippedConnection: Flow<Boolean> = context.dataStore.data.map { it[HAS_SKIPPED_CONNECTION] ?: false }
+
+    suspend fun setCurrentBoardId(boardId: String) {
+        context.dataStore.edit { prefs ->
+            prefs[CURRENT_BOARD_ID] = boardId
+            prefs[CONNECTED_TO] = boardId
+        }
+    }
 
     suspend fun saveUser(id: String, name: String, code: String) {
         context.dataStore.edit { prefs ->
