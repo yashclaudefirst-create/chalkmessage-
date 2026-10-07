@@ -4,10 +4,14 @@ import com.example.chalkmessage.data.model.Board
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.rpc
+import kotlinx.serialization.Serializable
 import java.security.SecureRandom
 import java.time.Instant
 import java.time.format.DateTimeFormatter
+
+@Serializable
+private data class JoinBoardParams(val p_code: String)
 
 class BoardRepository(
     private val supabase: SupabaseClient
@@ -29,8 +33,8 @@ class BoardRepository(
             val candidateCode = (100000 + random.nextInt(900000)).toString()
             val nowIso = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 
-            // Check uniqueness against active (non-expired) codes
-            val existing = supabase.postgrest["boards"].select {
+            // Check uniqueness against active (non-expired) codes in chalk_boards
+            val existing = supabase.postgrest["chalk_boards"].select {
                 filter {
                     eq("code", candidateCode)
                     gt("code_expires_at", nowIso)
@@ -62,12 +66,52 @@ class BoardRepository(
             codeExpiresAt = expiresAtIso
         )
 
-        // TODO: Rate-limit code lookups at join (step 3) via Postgres RPC + attempt counter.
-
-        val inserted = supabase.postgrest["boards"].insert(newBoard) {
+        val inserted = supabase.postgrest["chalk_boards"].insert(newBoard) {
             select()
         }.decodeSingle<Board>()
 
         return inserted
+    }
+
+    suspend fun joinBoard(code: String): String {
+        if (supabase.auth.currentSessionOrNull() == null) {
+            throw IllegalStateException("Active authentication session required to join a board.")
+        }
+
+        try {
+            val response = supabase.postgrest.rpc("join_board", JoinBoardParams(code.trim()))
+            val boardId = response.decodeSingleOrNull<String>()
+            if (boardId.isNullOrEmpty()) {
+                throw IllegalArgumentException("Invalid or expired code")
+            }
+            return boardId
+        } catch (e: IllegalArgumentException) {
+            throw e
+        } catch (e: Exception) {
+            val msg = e.message ?: ""
+            when {
+                msg.contains("Too many attempts", ignoreCase = true) -> {
+                    throw IllegalStateException("Too many attempts. Please try again later.")
+                }
+                msg.contains("Board is full", ignoreCase = true) -> {
+                    throw IllegalStateException("Board is full.")
+                }
+                else -> {
+                    throw IllegalStateException(e.localizedMessage ?: "Failed to join board.")
+                }
+            }
+        }
+    }
+
+    suspend fun getBoardById(boardId: String): Board? {
+        return try {
+            supabase.postgrest["chalk_boards"].select {
+                filter {
+                    eq("id", boardId)
+                }
+            }.decodeSingleOrNull<Board>()
+        } catch (e: Exception) {
+            null
+        }
     }
 }

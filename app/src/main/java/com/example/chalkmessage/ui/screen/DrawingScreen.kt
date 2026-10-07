@@ -58,9 +58,10 @@ fun DrawingScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Immersive Mode effect
+    // Immersive Mode effect & Realtime sync
     val window = (context as? Activity)?.window
     LaunchedEffect(Unit) {
+        viewModel.startRealtimeSyncForActiveBoard()
         if (window != null) {
             val controller = WindowCompat.getInsetsController(window, window.decorView)
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE

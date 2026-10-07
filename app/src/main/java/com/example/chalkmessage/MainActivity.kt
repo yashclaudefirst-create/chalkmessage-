@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.chalkmessage.ui.screen.CreateBoardScreen
 import com.example.chalkmessage.ui.screen.DrawingScreen
 import com.example.chalkmessage.ui.screen.HistoryScreen
+import com.example.chalkmessage.ui.screen.JoinBoardScreen
 import com.example.chalkmessage.ui.screen.OnboardingScreen
 import com.example.chalkmessage.ui.screen.SplashScreen
 import com.example.chalkmessage.ui.screen.WelcomeScreen
@@ -19,6 +20,7 @@ import com.example.chalkmessage.ui.theme.ChalkMessageTheme
 import com.example.chalkmessage.ui.viewmodel.CreateBoardViewModel
 import com.example.chalkmessage.ui.viewmodel.DrawingViewModel
 import com.example.chalkmessage.ui.viewmodel.HistoryViewModel
+import com.example.chalkmessage.ui.viewmodel.JoinBoardViewModel
 import com.example.chalkmessage.ui.viewmodel.OnboardingViewModel
 import com.example.chalkmessage.ui.viewmodel.SplashViewModel
 
@@ -63,22 +65,44 @@ fun ChalkApp(app: ChalkMessageApp) {
             WelcomeScreen(
                 onCreateBoard = {
                     navController.navigate("create_board")
+                },
+                onJoinBoard = {
+                    navController.navigate("join_board")
                 }
             )
         }
 
         composable("create_board") {
             val viewModel: CreateBoardViewModel = viewModel(
-                factory = CreateBoardViewModel.Factory(app.boardRepository)
+                factory = CreateBoardViewModel.Factory(app.boardRepository, app.userPrefs, app.supabase)
             )
             CreateBoardScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onBoardCreated = {
+                    navController.navigate("drawing") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable("join_board") {
+            val viewModel: JoinBoardViewModel = viewModel(
+                factory = JoinBoardViewModel.Factory(app.boardRepository, app.userPrefs, app.supabase)
+            )
+            JoinBoardScreen(
+                viewModel = viewModel,
+                onJoinedBoard = {
+                    navController.navigate("drawing") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                }
             )
         }
 
         composable("onboarding") {
             val viewModel: OnboardingViewModel = viewModel(
-                factory = OnboardingViewModel.Factory(app.userPrefs, app.firebaseRepo)
+                factory = OnboardingViewModel.Factory(app.userPrefs, app.boardRepository, app.supabase)
             )
             OnboardingScreen(
                 viewModel = viewModel,

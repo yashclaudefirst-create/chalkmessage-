@@ -18,7 +18,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Path
@@ -38,14 +37,13 @@ import com.example.chalkmessage.ui.components.ChalkStar
 import com.example.chalkmessage.ui.components.ChalkWhite
 import com.example.chalkmessage.ui.components.ChalkboardBackground
 import com.example.chalkmessage.ui.theme.PatrickHandFontFamily
-import kotlinx.coroutines.launch
 
 @Composable
 fun WelcomeScreen(
-    onCreateBoard: () -> Unit
+    onCreateBoard: () -> Unit,
+    onJoinBoard: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     ChalkboardBackground(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -194,11 +192,7 @@ fun WelcomeScreen(
 
                     ChalkOutlineButton(
                         text = "Join a Board",
-                        onClick = {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Joining arrives in the next step.")
-                            }
-                        }
+                        onClick = onJoinBoard
                     )
 
                     Spacer(modifier = Modifier.weight(0.15f))
